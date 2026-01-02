@@ -1,20 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const SECRET = process.env.SECRET as string;
-
+const SECRET = process.env.SECRET;
+if (!SECRET) throw new Error("SECRET not defined in .env");
 export function validateToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.sendStatus(401);
-  }
-
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return res.sendStatus(401);
   const token = authHeader.split(" ")[1];
-
   try {
-    jwt.verify(token, SECRET);
+    jwt.verify(token, SECRET!);
     next();
   } catch {
     return res.sendStatus(401);
   }
 }
+
+

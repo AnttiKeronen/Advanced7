@@ -4,9 +4,8 @@
   <title>Home</title>
 </head>
 <body>
-  <h2 id="message">Loading...</h2>
+  <h2 id="message"></h2>
   <button id="logout">Logout</button>
-
   <script>
     const token = localStorage.getItem("token");
     if (!token) window.location.href = "/login.html";
@@ -21,9 +20,7 @@
       }
       return res.json();
     })
-    .then(data => {
-      document.getElementById("message").innerText = data.message;
-    })
+    .then(data => document.getElementById("message").innerText = data.message)
     .catch(err => {
       console.error(err);
       localStorage.removeItem("token");
@@ -37,3 +34,4 @@
   </script>
 </body>
 </html>
+
