@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+</head>
+<body>
+  <h2 id="message"></h2>
+  <button id="logout">Logout</button>
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login.html";
+    }
+    fetch("/api/private", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+      .then(res => {
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          window.location.href = "/login.html";
+        }
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById("message").innerText = data.message;
+      });
+    document.getElementById("logout").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+    });
+  </script>
+</body>
+</html>
