@@ -4,28 +4,32 @@
   <title>Home</title>
 </head>
 <body>
-  <h2 id="message"></h2>
+  <h2 id="message">Loading...</h2>
   <button id="logout">Logout</button>
+
   <script>
     const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/login.html";
-    }
+    if (!token) window.location.href = "/login.html";
+
     fetch("/api/private", {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
+      headers: { "Authorization": "Bearer " + token }
     })
-      .then(res => {
-        if (!res.ok) {
-          localStorage.removeItem("token");
-          window.location.href = "/login.html";
-        }
-        return res.json();
-      })
-      .then(data => {
-        document.getElementById("message").innerText = data.message;
-      });
+    .then(res => {
+      if (!res.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      }
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById("message").innerText = data.message;
+    })
+    .catch(err => {
+      console.error(err);
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+    });
+
     document.getElementById("logout").addEventListener("click", () => {
       localStorage.removeItem("token");
       window.location.href = "/login.html";

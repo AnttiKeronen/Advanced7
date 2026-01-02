@@ -6,30 +6,37 @@
 <body>
   <h2>Login</h2>
   <form id="loginForm">
-    <input type="text" id="email" placeholder="Email" required />
-    <br />
-    <input type="text" id="password" placeholder="Password" required />
-    <br />
+    <input type="text" id="email" placeholder="Email" required /><br/>
+    <input type="password" id="password" placeholder="Password" required /><br/>
     <button type="submit">Login</button>
   </form>
   <script>
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); 
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const res = await fetch("/api/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      if (res.ok) {
+      try {
+        const res = await fetch("/api/user/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          return alert("Login failed: " + errText);
+        }
         const data = await res.json();
+        if (!data.token) return alert("Login failed: token missing");
         localStorage.setItem("token", data.token);
-        window.location.href = "/";
-      } else {
-        alert("Login failed");
+        window.location.href = "/"; 
+      } catch (err) {
+        console.error(err);
+        alert("Login error");
       }
     });
   </script>
 </body>
 </html>
+
